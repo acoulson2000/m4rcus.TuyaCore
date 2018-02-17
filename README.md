@@ -1,4 +1,4 @@
-# Tuya Smart Plug Service (.NET Standard 2.0 & Raspberry Pi)
+# Tuya Smart Plug REST Service (.NET Standard 2.0 & Raspberry Pi)
 
 I forked this project from https://github.com/Marcus-L/m4rcus.TuyaCore because I want to control Tuya (and compatible) devices from OpenHab2 running on a Raspberry Pi (Raspbian distro) 
 and I found that using Marcus' executable via the exec binding, or even using this plugin https://github.com/unparagoned/njsTuya resulted in pretty long response times, since there
@@ -21,6 +21,7 @@ modified the project to build all the dependencies into the target directory whe
 * Build the web service: At command line, go to the TuyaService directory under this solution, and run "dotnet publish". This will build the service and copy all the runtime dependencies to <solution_home>\TuyaService\bin\HPD\Debug\netcoreapp2.0.
 * Tar everything in that directory and scp it to your Raspberry Pi. Unpack it into a target directory, like /opt/TuyaService.  Since I was using it with OpenHab2, which runs as the user, "openhabian", I did a chmod -R 755 * on the target directory to make everything readable by all users.
 * Launch the service via something like: "dotnet /opt/TuyaService/TuyaService.dll"
+* For convenience, I've inlcuded a rudimentary init.d script in the project root. Copy it to your /etc/init.d directory as "tuya" and symlink it to your /etc/rc<x>.d directories for automatic startup and shutdown.
 
 ## Usage
 
@@ -38,15 +39,15 @@ For example:
  wget -o out.txt "http://localhost:5000/tuya?ip=192.168.0.101&deviceId=0120015260091453a970&key=5f5f784cd82d449b&operation=status"
 
 This makes it very easy to use in item definitions in OpenHab2 using the HTTP binding. For example, here are two items from my default.items file, one which obtains the device status as a string every 60 seconds, and a Switch, which turns my switch on or off:
-
+```
 String TuyaArtLamp                      "Art Lamp"                                                      {http="<[tuyaservice:60000:REGEX((.*))]"} /* defined in services/http.cfg */
 Switch Light_Living_ArtLamp             "Art Lamp switch"                       (GF_Living)             {http=">[ON:GET:http://localhost:5000/tuya?ip=192.168.2.41&deviceId=002003295ccf7f393512&key=f1bd1c710bbd699b&operation=on] >[OFF:GET:http://localhost:5000/tuya?ip=192.168.2.41&deviceId=002003295ccf7f393512&key=f1bd1c710bbd699b&operation=off]"}
- 
+``` 
  and in my /etc/openhab2/services/http.cfg file:
- 
+``` 
 tuyaservice.url=http://localhost:5000/tuya?ip=192.168.2.41&deviceId=002003295ccf7f393512&key=f1bd1c710bbd699b&operation=status
 tuyaservice.updateInterval=120000
-
+```
 
 ## Credits
 * https://github.com/Marcus-L/m4rcus.TuyaCore
