@@ -32,7 +32,7 @@ Perform http GET operations using the following URL:
 
 	http://localhost:5000/tuya?ip=<ip_address>&deviceId=<deviceId>&key=<key>&operation=<op>
 	
-where <ip_address>, <deviceId>, and <key> can be obtained as described in Marcus' README 
+where &lt;ip_address&gt;, &lt;deviceId&gt;, and &lt;key&gt; can be obtained as described in Marcus' README 
 and &lt;op&gt; is one of: on, off, or status
 
 For example:
