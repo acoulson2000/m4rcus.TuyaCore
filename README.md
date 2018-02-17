@@ -46,7 +46,7 @@ Switch Light_Living_ArtLamp             "Art Lamp switch"                       
  and in my /etc/openhab2/services/http.cfg file:
 ``` 
 tuyaservice.url=http://localhost:5000/tuya?ip=192.168.2.41&deviceId=002003295ccf7f393512&key=f1bd1c710bbd699b&operation=status
-tuyaservice.updateInterval=120000
+tuyaservice.updateInterval=60000
 ```
 
 ## Credits
