@@ -32,8 +32,8 @@ Perform http GET operations using the following URL:
 
 	http://localhost:5000/tuya?ip=<ip_address>&deviceId=<deviceId>&key=<key>&operation=<op>
 	
-	where <ip_address>, <deviceId>, and <key> can be obtained as described in Marcus' README 
-	and <op> is one of: on, off, or status
+where <ip_address>, <deviceId>, and <key> can be obtained as described in Marcus' README 
+and <op> is one of: on, off, or status
 
 For example:
  wget -o out.txt "http://localhost:5000/tuya?ip=192.168.0.101&deviceId=0120015260091453a970&key=5f5f784cd82d449b&operation=status"
