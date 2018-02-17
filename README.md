@@ -1,69 +1,29 @@
-# Tuya Smart Plug API (.NET Standard 2.0)
+# Tuya Smart Plug Service (.NET Standard 2.0 & Raspberry Pi)
 
-This .NET Standard 2.0 API allows programmatic control over the basic functions of Tuya Smart Plugs, including getting and setting Power status.
+I forked this project from https://github.com/Marcus-L/m4rcus.TuyaCore because I want to control Tuya (and compatible) devices from OpenHab2
+and I found that using Marcus' executable via the exec binding, or even using this plugin https://github.com/unparagoned/njsTuya
 
 <img src="tuya-plug.jpg">
 
 ## Requirements
 * .NET Core 2.0
 
-## Known-working devices:
-* [Zentec Living Smart Plug Outlet with USB Port](https://www.amazon.com/gp/product/B074YGV2NK)
-* [ISELECTOR Mini Smart Plug](https://www.amazon.com/gp/product/B075XL3DRD)
-* [Xenon Smart Plug PW701U](https://www.amazon.com/Xenon-PW701U-Socket-Outlet-Android/dp/B06W55BTV5)
+For information on supported devices, obtaining the IP, device ID, and key that are necessary to control your device,
+see the [README](https://github.com/Marcus-L/m4rcus.TuyaCore/blob/master/README.md) at [Marcus' repo](https://github.com/Marcus-L/m4rcus.TuyaCore)
+  
+## Rapberry Pi installation
+To build and install on Rapsberry Pi:
+* Install the .Net SDK on your desktop: https://www.microsoft.com/net/learn/get-started/windows
+* Install .Net Core on the Pi. I followed the "Install the .NET Core Runtime on the Raspberry Pi" instructions under Step 3 on this page: https://blogs.msdn.microsoft.com/david/2017/07/20/setting_up_raspian_and_dotnet_core_2_0_on_a_raspberry_pi/
+* Build the web service: At command line, go to the TuyaService directory under this solution, and run "dotnet publish". This will build the service and copy all the runtime dependencies to <solution_home>\TuyaService\bin\HPD\Debug\netcoreapp2.0.
+* Tar everything in that directory and scp it to your Raspberry Pi. Unpack it into a target directory, like /opt/TuyaService.  Since I was using it with OpenHab2, which runs as the user, "openhabian", I did a chmod -R 755 * on the target directory to make everything readable by all users.
+* Launch the service via something like: "dotnet /opt/TuyaService/TuyaService.dll"
 
-Many Smart Plug devices compatible with the Tuya Smart Life and Jinvoo Smart app also appear to be compatible with the Tuya protocol.
-
-## Installation
-```powershell
-Install-Package m4rcus.TuyaCore
-```
-
-## Retrieving Tuya Plug ID and LocalKey values:
-1. Install the [Tuya Smart Life](https://play.google.com/store/apps/details?id=com.tuya.smartlife) App onto your device
-1. Install ADB on your computer: https://www.xda-developers.com/install-adb-windows-macos-linux/
-1. Ensure your device has USB debugging enabled
-1. Plug device into your computer
-1. Run filtered ADB logcat via shell:
-   ```powershell
-   > adb shell
-   > logcat | grep BindDeviceSuccessPresenter
-   ```
-1. Add the smart plug in the Tuya App, monitor the adb logcat output for the following
-1. Find the "localKey" and "devId" keys listed in the output, ex:
-   ```
-   12-06 23:58:53.544 17782 17782 D Tuya    : BindDeviceSuccessPresenter updateList devIds:[{"ability":0,"attribute":0,"bv":"5.06","cloudOnline":true,"devId":"0120015260091453a970","encrypt":false,"gwType":"s","i18nTime":0,"iconUrl":"https://images.tuyaus.com/smart/icon/1496461963_0.jpeg","isLocalOnline":false,"isOnline":true,"lat":"","localKey":"5f5f784cd82d449b","lon":"","name":"WiFi Plug ","pv":"2.1","rnFind":false,"runtimeEnv":"prod","supportGroup":false,"switchDp":0,"time":1512626328,"uuid":"0120015260091453a970","verSw":"1.0.4"}]
-   ```
-   In this example, the LocalKey is `5f5f784cd82d449b` and the Id is `0120015260091453a970`
-1. Find the IP address of your device via your router's DHCP leases. The IP address reported by the app is not the local IP address.
-   
 ## Usage
 
-### Console utility
-
-```Powershell
-> dotnet m4rcus.TuyaCore.Console.dll -i <ip> -k <localKey> -d <deviceId> [status|power-on|power-off]
-```
-
-### Querying status, toggling power (async)
-
-```C#
-using m4rcus.TuyaCore;
-```
-
-```C#
-var device = new TuyaPlug()
-{
-    IP = "192.168.0.101",
-    LocalKey = "5f5f784cd82d449b",
-    Id = "0120015260091453a970"
-};
-var status = await device.GetStatus();
-await device.SetStatus(!status.Powered); // toggle power
-```
 
 ## Credits
 
 Protocol details from @codetheweb and @clach04:
-* https://github.com/codetheweb/tuyapi
-* https://github.com/clach04/python-tuya/wiki
+* https://github.com/Marcus-L/m4rcus.TuyaCore
+* https://github.com/unparagoned/njsTuya
